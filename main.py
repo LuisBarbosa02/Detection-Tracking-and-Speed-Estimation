@@ -52,6 +52,13 @@ def parse_arguments():
         help="Path to output annotated video file.",
         type=str
     )
+    parser.add_argument(
+        "--model",
+        required=False,
+        default="yolov11x-640",
+        help="Detection model to be used.",
+        type=str
+    )
     return parser.parse_args()
 
 # Run algorithm
@@ -59,7 +66,9 @@ if __name__ == '__main__':
     args = parse_arguments()
 
     video_info = sv.VideoInfo.from_video_path(args.source_video_path)
-    model = get_roboflow_model("yolov11x-640") # "yolov8x-640" # "rfdetr-base" # "yolov11x-640"
+    if args.model not in ["yolov8x-640", "rfdetr-base", "yolov11x-640"]:
+        raise ValueError("Choose between the models: yolov8x-640, rfdetr-base, or yolov11x-640")
+    model = get_roboflow_model(args.model)
 
     byte_track = sv.ByteTrack(frame_rate=video_info.fps)
 
